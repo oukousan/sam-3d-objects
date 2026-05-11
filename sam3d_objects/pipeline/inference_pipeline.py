@@ -17,8 +17,8 @@ def set_attention_backend():
     logger.info(f"GPU name is {gpu_name}")
     if "A100" in gpu_name or "H100" in gpu_name or "H200" in gpu_name:
         # logger.info("Use flash_attn")
-        os.environ["ATTN_BACKEND"] = "flash_attn"
-        os.environ["SPARSE_ATTN_BACKEND"] = "flash_attn"
+        os.environ["ATTN_BACKEND"] = os.environ.get("ATTN_BACKEND", "sdpa")
+        os.environ["SPARSE_ATTN_BACKEND"] = os.environ.get("SPARSE_ATTN_BACKEND", "xformers")
 
 set_attention_backend()
 

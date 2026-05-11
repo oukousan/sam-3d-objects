@@ -11,6 +11,10 @@
 #
 
 import torch
+try:
+    from diff_gaussian_rasterization import GaussianRasterizer, GaussianRasterizationSettings
+except ImportError:
+    from diff_gauss import GaussianRasterizer, GaussianRasterizationSettings
 import math
 from easydict import EasyDict as edict
 import numpy as np
@@ -138,9 +142,7 @@ def render(
             image_width=int(viewpoint_camera.image_width),
             tanfovx=tanfovx,
             tanfovy=tanfovy,
-            kernel_size=kernel_size,
-            subpixel_offset=subpixel_offset,
-            bg=bg_color,
+                    bg=bg_color,
             scale_modifier=scaling_modifier,
             viewmatrix=viewpoint_camera.world_view_transform,
             projmatrix=viewpoint_camera.full_proj_transform,
@@ -152,7 +154,7 @@ def render(
         rasterizer = GaussianRasterizer(raster_settings=raster_settings)
 
         # Rasterize visible Gaussians to image, obtain their radii (on screen).
-        rendered_image, radii = rasterizer(
+        rasterizer_ret = rasterizer(
             means3D=means3D,
             means2D=means2D,
             shs=shs,
@@ -160,8 +162,14 @@ def render(
             opacities=opacity,
             scales=scales,
             rotations=rotations,
-            cov3D_precomp=cov3D_precomp,
         )
+
+        if isinstance(rasterizer_ret, (tuple, list)):
+            rendered_image = rasterizer_ret[0]
+            radii = rasterizer_ret[1]
+        else:
+            rendered_image = rasterizer_ret
+            radii = None
     elif backend == "gsplat":
         """
         See reference code to convert from gsplat to inria:
