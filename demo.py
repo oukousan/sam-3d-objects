@@ -23,8 +23,8 @@ output = inference(
     image,
     mask,
     seed=42,
-    with_mesh_postprocess=True,
-    with_texture_baking=True,
+    with_mesh_postprocess=False,
+    with_texture_baking=False,
     use_vertex_color=False,
 )
 
