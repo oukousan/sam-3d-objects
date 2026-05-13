@@ -104,6 +104,9 @@ class Inference:
         mask: Optional[Union[None, Image.Image, np.ndarray]],
         seed: Optional[int] = None,
         pointmap=None,
+        with_mesh_postprocess: bool = False,
+        with_texture_baking: bool = False,
+        use_vertex_color: bool = True,
     ) -> dict:
         image = self.merge_mask_to_rgba(image, mask)
         return self._pipeline.run(
@@ -111,10 +114,10 @@ class Inference:
             None,
             seed,
             stage1_only=False,
-            with_mesh_postprocess=False,
-            with_texture_baking=False,
+            with_mesh_postprocess=with_mesh_postprocess,
+            with_texture_baking=with_texture_baking,
             with_layout_postprocess=False,
-            use_vertex_color=True,
+            use_vertex_color=use_vertex_color,
             stage1_inference_steps=None,
             pointmap=pointmap,
         )
